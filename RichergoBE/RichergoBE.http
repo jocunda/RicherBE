@@ -1,0 +1,6 @@
+@RichergoBE_HostAddress = http://localhost:5105
+
+GET {{RichergoBE_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
