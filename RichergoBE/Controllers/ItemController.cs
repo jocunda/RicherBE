@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Mvc;
 using RichergoBE.Services.ItemService;
 
 namespace RichergoBE.Controllers
@@ -17,7 +15,7 @@ namespace RichergoBE.Controllers
       }
 
     [HttpGet]
-    [Route("itemlist")]
+    [Route("itemList")]
     public async Task<ActionResult<List<Item>>> GetAllItems ()
       {
       return await _itemService.GetAllItems();

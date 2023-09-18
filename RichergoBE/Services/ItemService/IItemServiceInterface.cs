@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using RichergoBE.Models;
-
+﻿
 namespace RichergoBE.Services.ItemService
   {
   public interface IItemServiceInterface

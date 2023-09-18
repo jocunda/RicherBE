@@ -1,8 +1,9 @@
 global using RichergoBE.Models;
+global using RichergoBE.Data;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using System.Security.Claims;
+using RichergoBE.Services.ItemService;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,11 +14,15 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+//item
+builder.Services.AddScoped<IItemServiceInterface, ItemService>();
+
+//user
 builder.Services.AddAuthentication().AddBearerToken(IdentityConstants.BearerScheme);
 builder.Services.AddAuthorizationBuilder();
-builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+builder.Services.AddDbContext<DataContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 builder.Services.AddIdentityCore<MyUser>()
-   .AddEntityFrameworkStores<AppDbContext>()
+   .AddEntityFrameworkStores<DataContext>()
    .AddApiEndpoints();
 
 var app = builder.Build();
@@ -42,11 +47,11 @@ app.MapGet("/", (ClaimsPrincipal user) => $"Hello {user.Identity!.Name}")
 
 app.Run();
 
-//auth user
-public class MyUser : IdentityUser { }
+
+/*public class MyUser : IdentityUser { }
 public class AppDbContext : IdentityDbContext<MyUser>
 {
   public AppDbContext (DbContextOptions<AppDbContext> options) : base(options)
     {
     }
-  }
+  }*/
