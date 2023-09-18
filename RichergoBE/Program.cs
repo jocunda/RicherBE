@@ -3,7 +3,7 @@ global using RichergoBE.Data;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
-using RichergoBE.Services.ItemService;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,8 +14,8 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-//item
-builder.Services.AddScoped<IItemServiceInterface, ItemService>();
+//services
+builder.Services.AddMyDependencyGroup();
 
 //user
 builder.Services.AddAuthentication().AddBearerToken(IdentityConstants.BearerScheme);
@@ -47,11 +47,3 @@ app.MapGet("/", (ClaimsPrincipal user) => $"Hello {user.Identity!.Name}")
 
 app.Run();
 
-
-/*public class MyUser : IdentityUser { }
-public class AppDbContext : IdentityDbContext<MyUser>
-{
-  public AppDbContext (DbContextOptions<AppDbContext> options) : base(options)
-    {
-    }
-  }*/

@@ -10,6 +10,7 @@ namespace RichergoBE.Data
       }
 
     public DbSet<Item> ItemList { get; set; }
+    public DbSet<Inventory> InventoryList { get; set; }
 
     }
   }
