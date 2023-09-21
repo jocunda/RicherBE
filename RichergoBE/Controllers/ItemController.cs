@@ -1,88 +1,109 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using RichergoBE.Services.ItemService;
+using Microsoft.EntityFrameworkCore;
 
 namespace RichergoBE.Controllers
-  {
+{
   [Authorize]
   [Route("api/[controller]")]
   [ApiController]
   public class ItemController : ControllerBase
     {
-    private readonly IItemServiceInterface _inventoryService;
+    private readonly DataContext db;
 
-    public ItemController (IItemServiceInterface itemService)
+    public ItemController (DataContext context)
       {
-      _inventoryService = itemService;
+      db = context;
       }
 
     [HttpGet]
     [Route("itemList")]
-    public async Task<ActionResult<List<Item>>> GetAllItems ()
+    public async Task<ActionResult<IEnumerable<Item>>> GetAllItems ()
       {
-      return await _inventoryService.GetAllItems();
+      var items= await db.Items.ToListAsync();
+      return Ok(items);
       }
 
     [HttpGet("{id}")]
     public async Task<ActionResult<Item>> GetSingleItem (Guid id)
       {
-      var result = await _inventoryService.GetSingleItem(id);
-      if ( result is null )
+      var item = await db.Items.FindAsync(id);
+      if ( item is null )
+        {
         return NotFound("Item Not Found");
-      return Ok(result);
+        }
+      return Ok(item);
       }
 
     [HttpPost]
     [Route("addItem")]
-    public async Task<ActionResult<List<Item>>> AddItem (Item item)
+    public async Task<ActionResult<IEnumerable<Item>>> AddItem (ItemRequest itemRequest)
       {
-      if ( item == null || string.IsNullOrWhiteSpace(item.Value) || string.IsNullOrWhiteSpace(item.Code) )
+
+      if ( itemRequest == null || string.IsNullOrWhiteSpace(itemRequest.Value) || string.IsNullOrWhiteSpace(itemRequest.Code) )
         {
         return BadRequest("Value and Code of Item are required!");
         }
-
-      var itemExists = await _inventoryService.ItemExistsAsync(item);
-      if ( itemExists )
+      var codeExists = await db.Items.AnyAsync(i => i.Code == itemRequest.Code);
+      var valueExists = await db.Items.AnyAsync(i => i.Value == itemRequest.Value);
+      if ( codeExists || valueExists )
         {
         return Conflict("Item with the same Code or Value already exists.");
         }
 
-      item.Id = Guid.NewGuid();
-      var result = await _inventoryService.AddItem(item);
-      return Ok(result);
+
+      Item item = new Item
+        {
+        Value = itemRequest.Value,
+        Code = itemRequest.Code,
+        Description = itemRequest.Description,
+        };
+
+      db.Items.Add(item);
+      await db.SaveChangesAsync();
+      return Ok(await db.Items.ToListAsync());
       }
 
     [HttpPut]
     [Route("updateItem/{id}")]
-    public async Task<ActionResult<List<Item>>> UpdateItem (Guid id, Item request)
+    public async Task<ActionResult<IEnumerable<Item>>> UpdateItem (Guid id, ItemRequest itemRequest)
+    {
+      if ( itemRequest == null || string.IsNullOrWhiteSpace(itemRequest.Value) || string.IsNullOrWhiteSpace(itemRequest.Code) )
       {
-      if ( request == null || string.IsNullOrWhiteSpace(request.Value) || string.IsNullOrWhiteSpace(request.Code) )
-        {
         return BadRequest("Value and Code of Item are required!");
         }
-
-      var itemExists = await _inventoryService.ItemExistsAsync(request);
-      if ( itemExists )
+      var codeExists = await db.Items.AnyAsync(i => i.Code == itemRequest.Code);
+      var valueExists = await db.Items.AnyAsync(i => i.Value == itemRequest.Value);
+      if ( codeExists || valueExists )
         {
         return Conflict("Item with the same Code or Value already exists.");
         }
 
-      var result = await _inventoryService.UpdateItem(id, request);
-      if ( result is null )
-        return NotFound("Item not found");
-      return Ok(result);
+      var item = await db.Items.FindAsync(id);
+      if ( item is null )
+        return NotFound("Item Not Found");
+
+      item.Value = itemRequest.Value;
+      item.Code = itemRequest.Code;
+      item.Description = itemRequest.Description;
+      item.Photo = itemRequest.Photo;
+
+      await db.SaveChangesAsync();
+      return Ok(await db.Items.ToListAsync());
       }
 
     [HttpDelete]
     [Route("deleteItem/{id}")]
-    public async Task<ActionResult<List<Item>>> DeleteItem (Guid id)
+    public async Task<ActionResult<IEnumerable<Item>>> DeleteItem (Guid id)
       {
-      var result = await _inventoryService.DeleteItem(id);
-      if ( result is null )
-        return NotFound("Item not found");
-      return Ok(result);
-      }
+      var item = await db.Items.FindAsync(id);
+      if ( item is null )
+        return NotFound("Item Not Found");
 
+      db.Items.Remove(item);
+      await db.SaveChangesAsync();
+      return Ok(await db.Items.ToListAsync());
+      }
 
     }
   }

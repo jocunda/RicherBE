@@ -1,8 +1,10 @@
 global using RichergoBE.Models;
 global using RichergoBE.Data;
+global using RichergoBE.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
+
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -13,9 +15,6 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-
-//services
-builder.Services.AddMyDependencyGroup();
 
 //user
 builder.Services.AddAuthentication().AddBearerToken(IdentityConstants.BearerScheme);

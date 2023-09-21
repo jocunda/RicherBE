@@ -2,15 +2,15 @@
 using Microsoft.EntityFrameworkCore;
 
 namespace RichergoBE.Data
-  {
-  public class DataContext : IdentityDbContext<MyUser>
+{
+    public class DataContext : IdentityDbContext<MyUser>
     {
     public DataContext (DbContextOptions<DataContext> options) : base(options)
-      {
+      { 
       }
 
-    public DbSet<Item> ItemList { get; set; }
-    public DbSet<Inventory> InventoryList { get; set; }
-
+    public DbSet<Item> Items { get; set; }
+    public DbSet<Inventory> Inventories { get; set; }
+    public DbSet<Segmentation> Segmentations { get; set; }
     }
   }
