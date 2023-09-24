@@ -47,29 +47,6 @@ namespace RichergoBE.Migrations
                         .HasFilter("[NormalizedName] IS NOT NULL");
 
                     b.ToTable("AspNetRoles", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            Id = "b9604011-e820-48a3-a3d1-35c1e9f887c3",
-                            ConcurrencyStamp = "1",
-                            Name = "Admin",
-                            NormalizedName = "Admin"
-                        },
-                        new
-                        {
-                            Id = "ece41f35-672c-4bad-a265-445e980a41d1",
-                            ConcurrencyStamp = "2",
-                            Name = "Manager",
-                            NormalizedName = "Manager"
-                        },
-                        new
-                        {
-                            Id = "dee658f8-84c0-498b-9e38-be0b271b1540",
-                            ConcurrencyStamp = "3",
-                            Name = "User",
-                            NormalizedName = "User"
-                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

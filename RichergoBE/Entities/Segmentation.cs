@@ -2,14 +2,20 @@
 
 namespace RichergoBE.Entities
 {
-    public class Segmentation
+    public class WorkPlan
     {
     public Guid Id { get; set; } = Guid.NewGuid();
-    public double Quantity { get; set; }
-    public Guid OwnerId { get; set; }
-    public Guid TargetId { get; set; }
-    public Guid CreatedById { get; set; }
+    public Guid? ItemId { get; set; }
 
+    [ForeignKey("ItemId")]
+    public Item? Item { get; set; } //navigation
+
+    public Guid StartId { get; set; }
+    public Guid EndId { get; set; }
+    public DateTime StartDate { get; set; }
+    public DateTime EndDate { get; set; }
+    public Guid StatusId { get; set; }
+    public Guid CreatedById { get; set; }
     public DateTime CreatedAt { get; set; } = DateTime.Now;
     }
 }
